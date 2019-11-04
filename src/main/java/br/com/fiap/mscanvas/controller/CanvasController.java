@@ -1,8 +1,11 @@
 package br.com.fiap.mscanvas.controller;
 
 import br.com.fiap.mscanvas.model.Canvas;
+import br.com.fiap.mscanvas.mq.BroadcastConfig;
 import br.com.fiap.mscanvas.service.CanvasService;
 import io.swagger.annotations.Api;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -12,9 +15,11 @@ import javax.validation.Valid;
 public class CanvasController {
 
     private final CanvasService canvasService;
+    private final RabbitTemplate rabbitTemplate;
 
-    public CanvasController(CanvasService canvasService) {
+    public CanvasController(CanvasService canvasService, RabbitTemplate rabbitTemplate) {
         this.canvasService = canvasService;
+        this.rabbitTemplate = rabbitTemplate;
     }
 
     @GetMapping
@@ -39,6 +44,7 @@ public class CanvasController {
 
     @PutMapping
     public Iterable<Canvas> update(@Valid @RequestBody Iterable<Canvas> canvas) {
+        rabbitTemplate.convertAndSend(BroadcastConfig.FANOUT_EXCHANGE_NAME, "", "fanout" + canvas);
         return canvasService.update(canvas);
     }
 }

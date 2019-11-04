@@ -4,3 +4,8 @@ spring:
       database: fiap
       host: "172.17.0.2"
       port: 27017
+  rabbitmq:
+    addresses: 172.17.0.3:5672
+    adminAddresses: http://172.17.0.3:15672
+    username: guest
+    password: guest
