@@ -1,6 +1,8 @@
 package br.com.fiap.mscanvas.service;
 
 import br.com.fiap.mscanvas.model.Canvas;
+import br.com.fiap.mscanvas.repository.CanvasRepository;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,7 +19,6 @@ import java.util.Collections;
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 public class CanvasServiceTest {
 
-    @Autowired
     private CanvasService canvasService;
 
     @Test
