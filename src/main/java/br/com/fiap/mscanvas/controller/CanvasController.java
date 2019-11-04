@@ -2,6 +2,7 @@ package br.com.fiap.mscanvas.controller;
 
 import br.com.fiap.mscanvas.model.Canvas;
 import br.com.fiap.mscanvas.service.CanvasService;
+import io.swagger.annotations.Api;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
