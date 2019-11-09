@@ -1,0 +1,64 @@
+version: '2'
+
+# Define services
+services:
+  # App backend service
+  ms-canvas-app-server:
+    # Configuration for building the docker image for the backend service
+    build:
+      context: '' # Use an image built from the specified dockerfile in the `Canvas ` directory.
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080" # Forward the exposed port 8080 on the container to port 8080 on the host machine
+    restart: always
+    depends_on: 
+      - mongodb # This service depends on Mongo DB. Start that first.
+      - rabbitmq # This service depends on Rabbit MQ. Start that first
+    environment: # Pass environment variables to the service
+      SPRING_DATA_MONGODB_DATABASE: fiap
+      SPRING_DATA_MONGODB_HOST: mongodb
+      SPRING_DATA_MONGODB_PORT: 27017
+      SPRING_DATA_MONGODB_USERNAME: pwf
+      SPRING_DATA_MONGODB_PASSWORD: root123
+      SPRING_DATA_MONGODB_AUTHENTICATION_DATABASE: admin
+      SPRING_RABBITMQ_ADDRESSES: "rabbitmq:5672"
+      SPRING_RABBITMQ_ADMINADDRESSES: "rabbitmq:15672"
+      SPRING_RABBITMQ_USERNAME: guest
+      SPRING_RABBITMQ_PASSWORD: guest
+    networks: # Networks to join (Services on the same network can communicate with each other using their name)
+      - backend
+
+  # Database Service (Mongo DB)
+  mongodb:
+    image: mongo
+    ports:
+      - "27017:27017"
+    restart: always
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: pwf
+      MONGO_INITDB_ROOT_PASSWORD: root123
+    volumes:
+      - db-data:/data/db
+    networks:
+      - backend 
+
+  # Broker Service (RabbitMQ)
+  rabbitmq:
+    image: rabbitmq:management
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    restart: always
+    environment:
+      RABBITMQ_DEFAULT_USER: guest
+      RABBITMQ_DEFAULT_PASS: guest
+    networks:
+      - backend 
+
+# Volumes
+volumes:
+  db-data:
+
+# Networks to be created to facilitate communication between containers
+networks:
+  backend:
